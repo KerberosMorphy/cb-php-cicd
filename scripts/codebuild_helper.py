@@ -4,9 +4,9 @@ from os import environ
 
 parser = argparse.ArgumentParser('CodeBuild Helper', description='Command executor for Code Build')
 
-parser.add_argument('--registry_login', type=str, help='Docker Registry', action="store_true")
-parser.add_argument('--build_docker', type=str, help='Build Docker', action="store_true")
-parser.add_argument('--trigger_codebuild', type=str, help='Trigger CodeBuild', action="store_true")
+parser.add_argument('--registry_login', help='Docker Registry', action="store_true")
+parser.add_argument('--build_docker', help='Build Docker', action="store_true")
+parser.add_argument('--trigger_codebuild', help='Trigger CodeBuild', action="store_true")
 parser.add_argument('-r', '--registry', type=str, help='Docker Registry', default="docker.io")
 parser.add_argument('-u', '--username', type=str, help='Docker Username')
 parser.add_argument('-w', '--password', type=str, help='Docker Username')
