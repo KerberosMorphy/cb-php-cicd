@@ -90,15 +90,18 @@ if __name__ == '__main__':
         try:
             registry_login(username=args.username, password=args.password, registry=args.registry)
         except AssertionError as err:
+            print(err)
             environ['FAIL'] = 'PRE_BUILD'
     elif args.build_docker:
         try:
             build_docker(image_name=args.image_name, tags_list=args.tags_list, dockerfile=args.dockerfile, build_arg=args.build_arg)
         except AssertionError as err:
+            print(err)
             environ['FAIL'] = 'BUILD'
     elif args.trigger_codebuild:
         try:
             trigger_codebuild(project_name=args.project_name, image_override=args.image_override)
         except AssertionError as err:
+            print(err)
             environ['FAIL'] = 'POST_BUILD'
     error_handler(environ.get("FAIL", "NO_ERROR"))
