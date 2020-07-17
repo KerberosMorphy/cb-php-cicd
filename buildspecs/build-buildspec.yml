@@ -1,13 +1,13 @@
 version: 0.2
 
 env:
+  parameter-store:
+    DOCKER_USERNAME: DOCKER_USERNAME
+    DOCKER_PASSWORD: DOCKER_PASSWORD
   variables:
     DOCKER_REGISTRY: "docker.io"
-    PHP_IMAGE: "{{ssm:DOCKER_USERNAME}}/cb-php"
-    PHP_TEST_IMAGE: "{{ssm:DOCKER_USERNAME}}/cb-php-test"
-  parameter-store:
-    DOCKER_USERNAME: secret-id:json-key:version-stage:version-id
-    DOCKER_PASSWORD: secret-id:json-key:version-stage:version-id
+    PHP_IMAGE: "${DOCKER_USERNAME}/cb-php"
+    PHP_TEST_IMAGE: "${DOCKER_USERNAME}/cb-php-test"
 
 phases:
   pre_build:
