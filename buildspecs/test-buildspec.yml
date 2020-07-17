@@ -1,17 +1,9 @@
 version: 0.2
 
-env:
-  variables:
-    DOCKER_REGISTRY: "docker.io"
-  parameter-store:
-    DOCKER_USERNAME: DOCKER_USERNAME
-    DOCKER_PASSWORD: DOCKER_PASSWORD
-
 phases:
   pre_build:
     commands:
       - echo "Pre Build"
-      - python ./scripts/codebuild_helper.py registry_login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD --registry $DOCKER_REGISTRY
     finally:
       - echo "Finally Pre Build"
   build:
