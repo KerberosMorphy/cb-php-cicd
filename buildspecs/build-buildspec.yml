@@ -20,7 +20,7 @@ phases:
     commands:
       - echo "Build"
       - python ./scripts/codebuild_helper.py --build_docker --image_name $PHP_IMAGE --tags_list latest $CODEBUILD_RESOLVED_SOURCE_VERSION --dockerfile Dockerfile
-      - python ./scripts/codebuild_helper.py --build_docker --image_name $PHP_TEST_IMAGE --tags_list latest $CODEBUILD_RESOLVED_SOURCE_VERSION --Test.dockerfile Dockerfile --build_arg "base_image=$PHP_IMAGE:latest"
+      - python ./scripts/codebuild_helper.py --build_docker --image_name $PHP_TEST_IMAGE --tags_list latest $CODEBUILD_RESOLVED_SOURCE_VERSION --dockerfile Test.Dockerfile --build_arg "base_image=$PHP_IMAGE:latest"
     finally:
       - echo "Finally Build"
   post_build:

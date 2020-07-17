@@ -20,7 +20,6 @@ parser.add_argument('-t', '--tags_list', type=str, nargs='*', help='Tags other t
 args = parser.parse_args()
 
 def console_command(options: list, timeout=10):
-    # TODO Faire une fonction utils qui gere les erreurs
     proc = Popen(options, stdout=PIPE, stderr=PIPE, encoding='utf-8')
     return proc.communicate(timeout=timeout)
 
@@ -34,15 +33,11 @@ def error_handler(code):
 
 def registry_login(username, password, registry="docker.io"):
     print("Login to docker")
-    try:
-        res, err = console_command(["echo", password, "|", "docker", "login", "-u", username, "--password-stdin", registry])
-        if err:
-            raise AssertionError(f"{err}")
-        print("Login Success")
-        print(res)
-    except AssertionError as err:
-        print("Login Failed")
-        print(err)
+    res, err = console_command(["echo", password, "|", "docker", "login", "-u", username, "--password-stdin", registry])
+    if err:
+        raise AssertionError(f"{err}")
+    print("Login Success")
+    print(res)
     print("")
 
 def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""):
@@ -57,53 +52,53 @@ def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""
     print(f"Dockerfile set to {dockerfile}")
     print("")
     print("Pull image from registry to by used as cache...")
-    try:
-        res, err = console_command(["docker", "pull", "--quiet", f"{image_name}:latest", "||", "true"])
+    res, err = console_command(["docker", f"pull --quiet {image_name}:latest"])
+    print("")
+    if build_arg:
+        print(f"Build image with args {build_arg} from pulled image cache and create {tags}...")
+        res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", "--build-arg", build_arg, *tags, "--file", f"docker/{dockerfile}", "docker/"])
         if err:
             raise AssertionError(f"{err}")
-        print("")
-        if build_arg:
-            print(f"Build image with args {build_arg} from pulled image cache and create {tags}...")
-            res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", "--build-arg", build_arg, *tags, "--file", f"docker/{dockerfile}", "docker/"])
+    else:
+        print(f"Build image from pulled image cache and create {tags}...")
+        res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", *tags, "--file", f"docker/{dockerfile}", "docker/"])
+        if err:
+            raise AssertionError(f"{err}")
+    print("")
+    print("Push the tagged Docker images to the container registry..")
+    for tag in tags:
+        if tag != "--tag":
+            res, err = console_command(["docker", "push", tag])
             if err:
                 raise AssertionError(f"{err}")
-        else:
-            print(f"Build image from pulled image cache and create {tags}...")
-            res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", *tags, "--file", f"docker/{dockerfile}", "docker/"])
-            if err:
-                raise AssertionError(f"{err}")
-        print("")
-        print("Push the tagged Docker images to the container registry..")
-        for tag in tags:
-            if tag != "--tag":
-                res, err = console_command(["docker", "push", tag])
-                if err:
-                    raise AssertionError(f"{err}")
-    except AssertionError as err:
-        print("Push Failed")
-        print(err)
-        environ["FAIL"] = "BUILD"
     print("")
 
 def trigger_codebuild(project_name, image_override=""):
-    error_handler(environ.get("FAIL", "NO_ERROR"))
-    try:
-        err = False
-        if image_override:
-            res, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name, "--image-override", image_override])
-        else:
-            res, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name])
-        if err:
-            raise AssertionError(f"{err}")
-    except AssertionError as err:
-        print("Trigger Failed")
-    error_handler(environ.get("FAIL", "NO_ERROR"))
+    err = False
+    if image_override:
+        res, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name, "--image-override", image_override])
+    else:
+        res, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name])
+    print(res)
+    if err:
+        raise AssertionError(f"{err}")
 
 if __name__ == '__main__':
     args = parser.parse_args()
+    error_handler(environ.get("FAIL", "NO_ERROR"))
     if args.registry_login:
-        registry_login(username=args.username, password=args.password, registry=args.registry)
+        try:
+            registry_login(username=args.username, password=args.password, registry=args.registry)
+        except AssertionError as err:
+            environ['FAIL'] = 'PRE_BUILD'
     elif args.build_docker:
-        build_docker(image_name=args.image_name, tags_list=args.tags_list, dockerfile=args.dockerfile, build_arg=args.build_arg)
+        try:
+            build_docker(image_name=args.image_name, tags_list=args.tags_list, dockerfile=args.dockerfile, build_arg=args.build_arg)
+        except AssertionError as err:
+            environ['FAIL'] = 'BUILD'
     elif args.trigger_codebuild:
-        trigger_codebuild(project_name=args.project_name, image_override=args.image_override)
+        try:
+            trigger_codebuild(project_name=args.project_name, image_override=args.image_override)
+        except AssertionError as err:
+            environ['FAIL'] = 'POST_BUILD'
+    error_handler(environ.get("FAIL", "NO_ERROR"))
