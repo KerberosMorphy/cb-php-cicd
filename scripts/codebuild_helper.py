@@ -24,23 +24,27 @@ def console_command(options: list):
     return proc.communicate()
 
 def error_handler(code):
+    print("")
     if code == "PRE_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
     elif code == "BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
     elif code == "POST_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
+    else:
+        print('NO FAIL')
 
 def registry_login(username, password, registry="docker.io"):
+    print("")
     print("Login to docker")
     res, err = console_command(["echo", password, "|", "docker", "login", "-u", username, "--password-stdin", registry])
+    print(res)
     if err:
         raise AssertionError(f"{err}")
-    print("Login Success")
-    print(res)
     print("")
 
 def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""):
+    print("")
     tags_set = {"latest"}
     tags_set |= set(tags_list)
     tags = []
@@ -53,15 +57,18 @@ def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""
     print("")
     print("Pull image from registry to by used as cache...")
     res, err = console_command(["docker", f"pull --quiet {image_name}:latest"])
+    print(res)
     print("")
     if build_arg:
         print(f"Build image with args {build_arg} from pulled image cache and create {tags}...")
         res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", "--build-arg", build_arg, *tags, "--file", f"docker/{dockerfile}", "docker/"])
+        print(res)
         if err:
             raise AssertionError(f"{err}")
     else:
         print(f"Build image from pulled image cache and create {tags}...")
         res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", *tags, "--file", f"docker/{dockerfile}", "docker/"])
+        print(res)
         if err:
             raise AssertionError(f"{err}")
     print("")
@@ -70,11 +77,13 @@ def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""
         if tag != "--tag":
             print(f"PUSH: docker push {tag}")
             res, err = console_command(["docker", "push", tag])
+            print(res)
             if err:
                 raise AssertionError(f"{err}")
     print("")
 
 def trigger_codebuild(project_name, image_override=""):
+    print("")
     err = False
     if image_override:
         res, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name, "--image-override", image_override])
