@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Pre Build"
+    finally:
+      - echo "Finally Pre Build"
+  build:
+    commands:
+      - echo "Build"
+      - echo "Deploy Things"
+    finally:
+      - echo "Finally Build"
+  post_build:
+    commands:
+      - echo "Post Build"
+    finally:
+      - echo "Finally Post Build"

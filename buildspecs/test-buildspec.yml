@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  variables:
+    DOCKER_REGISTRY: "docker.io"
+  parameter-store:
+    DOCKER_USERNAME: secret-id:json-key:version-stage:version-id
+    DOCKER_PASSWORD: secret-id:json-key:version-stage:version-id
+
+phases:
+  pre_build:
+    commands:
+      - echo "Pre Build"
+      - python ./scripts/codebuild_helper.py registry_login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD --registry $DOCKER_REGISTRY
+    finally:
+      - echo "Finally Pre Build"
+  build:
+    commands:
+      - echo "Build"
+      - echo Unit Test
+      - phpunit --bootstrap ./src/Calculator.php ./tests/CalculatorTest.php
+      - phpunit --bootstrap ./src/Email.php ./tests/EmailTest.php
+      - echo Integration Test
+      - phpunit --bootstrap ./src/Music.php ./tests/MusicIntegrationTest.php
+      - echo Functional Test
+      - phpunit --bootstrap ./src/Music.php ./tests/MusicFunctionalTest.php
+    finally:
+      - echo "Finally Build"
+  post_build:
+    commands:
+      - python ./scripts/codebuild_helper.py --trigger_codebuild --project_name CHATOPS-PHP-CICD --image_override $PHP_TEST_IMAGE:latest
+    finally:
+      - echo "Finally Post Build"

@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    DOCKER_REGISTRY: "docker.io"
+    PHP_IMAGE: "{{ssm:DOCKER_USERNAME}}/cb-php"
+    PHP_TEST_IMAGE: "{{ssm:DOCKER_USERNAME}}/cb-php-test"
+  parameter-store:
+    DOCKER_USERNAME: secret-id:json-key:version-stage:version-id
+    DOCKER_PASSWORD: secret-id:json-key:version-stage:version-id
+
+phases:
+  pre_build:
+    commands:
+      - echo "Pre Build"
+      - python ./scripts/codebuild_helper.py --registry_login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD --registry $DOCKER_REGISTRY
+    finally:
+      - echo "Finally Pre Build"
+  build:
+    commands:
+      - echo "Build"
+      - python ./scripts/codebuild_helper.py --build_docker --image_name $PHP_IMAGE --tags_list latest $CODEBUILD_RESOLVED_SOURCE_VERSION --dockerfile Dockerfile
+      - python ./scripts/codebuild_helper.py --build_docker --image_name $PHP_TEST_IMAGE --tags_list latest $CODEBUILD_RESOLVED_SOURCE_VERSION --Test.dockerfile Dockerfile --build_arg "base_image=$PHP_IMAGE:latest"
+    finally:
+      - echo "Finally Build"
+  post_build:
+    commands:
+      - python ./scripts/codebuild_helper.py --trigger_codebuild --project_name TEST-PHP-CICD --image_override $PHP_TEST_IMAGE:latest
+    finally:
+      - echo "Finally Post Build"
