@@ -4,8 +4,8 @@ env:
   variables:
     DOCKER_REGISTRY: "docker.io"
   parameter-store:
-    DOCKER_USERNAME: secret-id:json-key:version-stage:version-id
-    DOCKER_PASSWORD: secret-id:json-key:version-stage:version-id
+    DOCKER_USERNAME: DOCKER_USERNAME
+    DOCKER_PASSWORD: DOCKER_PASSWORD
 
 phases:
   pre_build:

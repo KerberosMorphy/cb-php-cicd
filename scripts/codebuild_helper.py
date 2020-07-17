@@ -25,7 +25,6 @@ def console_command(options: list):
     return proc.communicate()
 
 def error_handler(code):
-    print("")
     if code == "PRE_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
         exit(1)
@@ -44,7 +43,6 @@ def registry_login(username, password, registry="docker.io"):
     res, err = console_command(["docker", "login", "-u", username, "-p", password, registry])
     print(res)
     print(err)
-    print("")
 
 def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""):
     print("")
