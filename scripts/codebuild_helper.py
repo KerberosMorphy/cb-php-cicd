@@ -39,7 +39,8 @@ def error_handler(code):
         print('NO FAIL')
 
 def registry_login(username, password, registry="docker.io"):
-    print(username.split())
+    for i in username:
+        print(i)
     print("")
     print("Login to docker")
     res, err = console_command(["echo", password, "|", "docker", "login", "-u", username, "--password-stdin", registry])
