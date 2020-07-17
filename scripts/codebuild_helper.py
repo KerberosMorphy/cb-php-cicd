@@ -43,8 +43,8 @@ def registry_login(username, password, registry="docker.io"):
     print("Login to docker")
     res, err = console_command(["docker", "login", "-u", username, "-p", password, registry])
     print(res)
-    if err:
-        raise AssertionError(f"{err}")
+    # if err:
+    #     raise AssertionError(f"{err}")
     print("")
 
 def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""):
