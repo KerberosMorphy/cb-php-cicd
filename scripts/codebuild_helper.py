@@ -47,7 +47,7 @@ def registry_login(username, password, registry="docker.io"):
 
 def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""):
     tags_set = {"latest"}
-    tags_set |= tags_list
+    tags_set |= set(tags_list)
     tags = []
     for tag in list(tags_set):
         tags.append("--tag")
