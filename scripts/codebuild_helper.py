@@ -1,6 +1,7 @@
 import argparse
 from subprocess import PIPE, Popen
 from os import environ
+from sys import exit
 
 parser = argparse.ArgumentParser('CodeBuild Helper', description='Command executor for Code Build')
 
@@ -27,10 +28,13 @@ def error_handler(code):
     print("")
     if code == "PRE_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
+        exit(1)
     elif code == "BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
+        exit(1)
     elif code == "POST_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
+        exit(1)
     else:
         print('NO FAIL')
 
