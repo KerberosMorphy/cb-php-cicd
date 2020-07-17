@@ -68,6 +68,7 @@ def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""
     print("Push the tagged Docker images to the container registry..")
     for tag in tags:
         if tag != "--tag":
+            print(f"PUSH: docker push {tag}")
             res, err = console_command(["docker", "push", tag])
             if err:
                 raise AssertionError(f"{err}")
