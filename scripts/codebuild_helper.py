@@ -5,9 +5,9 @@ from sys import exit
 
 parser = argparse.ArgumentParser('CodeBuild Helper', description='Command executor for Code Build')
 
-parser.add_argument('--registry_login', help='Docker Registry', action="store_true")
-parser.add_argument('--build_docker', help='Build Docker', action="store_true")
-parser.add_argument('--trigger_codebuild', help='Trigger CodeBuild', action="store_true")
+parser.add_argument('--registry_login', help='Login to Docker Registry', action="store_true")
+parser.add_argument('--build_docker', help='Build Dockerfile ans Publish', action="store_true")
+parser.add_argument('--trigger_codebuild', help='Trigger CodeBuild next step', action="store_true")
 parser.add_argument('-r', '--registry', type=str, help='Docker Registry', default="docker.io")
 parser.add_argument('-u', '--username', type=str, help='Docker Username')
 parser.add_argument('-w', '--password', type=str, help='Docker Username')
@@ -100,8 +100,6 @@ def trigger_codebuild(project_name, image_override=""):
 if __name__ == '__main__':
     args = parser.parse_args()
     is_error = True if not int(environ.get('CODEBUILD_BUILD_SUCCEEDING', 1)) else False
-    print(f"\nIS BUILD FAIL CODE: {environ.get('CODEBUILD_BUILD_SUCCEEDING')}")
-    print(f"IS BUILD FAIL: {is_error}\n")
     if is_error:
         exit()
     if args.registry_login:
@@ -116,7 +114,7 @@ if __name__ == '__main__':
         except AssertionError as err:
             print(err)
             environ['FAIL'] = 'BUILD'
-    elif args.trigger_codebuild and not is_error:
+    elif args.trigger_codebuild:
         try:
             trigger_codebuild(project_name=args.project_name, image_override=args.image_override)
         except AssertionError as err:
