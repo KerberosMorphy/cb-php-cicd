@@ -100,7 +100,10 @@ def trigger_codebuild(project_name, image_override=""):
 if __name__ == '__main__':
     args = parser.parse_args()
     is_error = environ.get('CODEBUILD_BUILD_SUCCEEDING', 1) == 0
-    print(f"\nIS BUILD FAIL: {is_error}\n")
+    print(f"\nIS BUILD FAIL CODE: {environ.get('CODEBUILD_BUILD_SUCCEEDING')}")
+    print(f"IS BUILD FAIL: {is_error}\n")
+    if is_error:
+        exit()
     if args.registry_login:
         try:
             registry_login(username=args.username, password=args.password, registry=args.registry)

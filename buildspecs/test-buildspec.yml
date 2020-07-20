@@ -23,10 +23,8 @@ phases:
       - phpunit --bootstrap ./src/Music.php ./tests/MusicFunctionalTest.php
     finally:
       - echo "Finally Build"
-      - echo $CODEBUILD_BUILD_SUCCEEDING
   post_build:
     commands:
-      - echo $CODEBUILD_BUILD_SUCCEEDING
       - python3 ./scripts/codebuild_helper.py --trigger_codebuild --project_name $CHATOPS_JOB_NAME
     finally:
       - echo "Finally Post Build"
