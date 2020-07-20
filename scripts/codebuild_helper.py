@@ -27,11 +27,7 @@ def console_command(options: list, stdin=None):
     else:
         return proc.communicate()
 
-def set_error(code):
-    console_command([f'FAIL=$(echo {code})'])
-
 def error_handler(code):
-    # set_error(code)
     if code == "PRE_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
         exit(1)
@@ -113,9 +109,8 @@ def trigger_codebuild(project_name, image_override=""):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    print(environ)
-    print(environ['CODEBUILD_BUILD_SUCCEEDING'])
-    error_handler(environ.get("FAIL", "NO_ERROR"))
+    if not environ.get('CODEBUILD_BUILD_SUCCEEDING', 1):
+      exit(1)
     if args.registry_login:
         try:
             registry_login(username=args.username, password=args.password, registry=args.registry)
