@@ -21,7 +21,7 @@ parser.add_argument('-t', '--tags_list', type=str, nargs='*', help='Tags other t
 args = parser.parse_args()
 
 def console_command(options: list):
-    proc = Popen(options, stdout=PIPE, stderr=PIPE, encoding='utf-8')
+    proc = Popen(options, stdin=PIPE, stdout=PIPE, stderr=PIPE, encoding='utf-8')
     return proc.communicate()
 
 def error_handler(code):

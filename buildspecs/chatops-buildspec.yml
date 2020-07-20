@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    PROJECT_NAME: DEPLOY-PHP-CICD
+    DEPLOY_JOB_NAME: DEPLOY-PHP-CICD
 
 phases:
   pre_build:
@@ -14,7 +14,7 @@ phases:
     commands:
       - echo "Build"
       - echo "To start the Deploy Job execute"
-      - echo "aws codebuild start-build --project-name $PROJECT_NAME"
+      - echo "aws codebuild start-build --project-name $DEPLOY_JOB_NAME"
     finally:
       - echo "Finally Build"
   post_build:

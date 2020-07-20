@@ -1,6 +1,16 @@
 version: 0.2
 
+env:
+  variables:
+    CHATOPS_JOB_NAME: CHATOPS-PHP-CICD
+
 phases:
+  install:
+    commands:
+      - echo "Install"
+      - apt-get install python3.8 -yqq
+    finally:
+      - echo "Finally Pre Build"
   pre_build:
     commands:
       - echo "Pre Build"
@@ -20,6 +30,6 @@ phases:
       - echo "Finally Build"
   post_build:
     commands:
-      - python ./scripts/codebuild_helper.py --trigger_codebuild --project_name CHATOPS-PHP-CICD --image_override $PHP_TEST_IMAGE:latest
+      - python ./scripts/codebuild_helper.py --trigger_codebuild --project_name $CHATOPS_JOB_NAME
     finally:
       - echo "Finally Post Build"
