@@ -27,7 +27,11 @@ def console_command(options: list, stdin=None):
     else:
         return proc.communicate()
 
+def set_error(code):
+    console_command([f'FAIL=$(echo {code})'])
+
 def error_handler(code):
+    set_error(code)
     if code == "PRE_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
         exit(1)
@@ -49,10 +53,12 @@ def registry_login(username, password, registry="docker.io"):
 
 def docker_exist(image):
     print("")
-    print("Login to docker")
+    print("Check if image exist")
     res, _ = console_command(["docker", "manifest", "inspect", image])
     if res:
+        print("Image exist")
         return True
+    print("Image doesn't exist")
     return False
 
 def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""):
