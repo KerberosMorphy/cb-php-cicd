@@ -99,7 +99,7 @@ def trigger_codebuild(project_name, image_override=""):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    is_error = environ.get('CODEBUILD_BUILD_SUCCEEDING', 1) == 0
+    is_error = True if not int(environ.get('CODEBUILD_BUILD_SUCCEEDING', 1)) else False
     print(f"\nIS BUILD FAIL CODE: {environ.get('CODEBUILD_BUILD_SUCCEEDING')}")
     print(f"IS BUILD FAIL: {is_error}\n")
     if is_error:
