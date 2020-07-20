@@ -8,7 +8,9 @@ phases:
   install:
     commands:
       - echo "Install"
-      - apt-get install python3.8 -yqq
+      - python --version
+      - python3 --version
+      - apt-get install python3
     finally:
       - echo "Finally Pre Build"
   pre_build:

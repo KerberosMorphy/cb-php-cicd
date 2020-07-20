@@ -20,9 +20,12 @@ parser.add_argument('-t', '--tags_list', type=str, nargs='*', help='Tags other t
 
 args = parser.parse_args()
 
-def console_command(options: list):
+def console_command(options: list, stdin=None):
     proc = Popen(options, stdin=PIPE, stdout=PIPE, stderr=PIPE, encoding='utf-8')
-    return proc.communicate()
+    if input:
+        return proc.communicate(input=stdin)
+    else:
+        return proc.communicate()
 
 def error_handler(code):
     if code == "PRE_BUILD":
@@ -41,7 +44,7 @@ def registry_login(username, password, registry="docker.io"):
     print("")
     print("Login to docker")
     # res, err = console_command(["docker", "login", "-u", username, "-p", password, registry])
-    res, err = console_command(["echo", password, "|", "docker", "login", "-u", username, "--password-stdin", registry])
+    res, err = console_command(["docker", "login", "-u", username, "--password-stdin", registry], stdin=password)
     print(res)
     print(err)
 
