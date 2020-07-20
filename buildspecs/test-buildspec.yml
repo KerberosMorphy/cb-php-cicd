@@ -5,14 +5,6 @@ env:
     CHATOPS_JOB_NAME: CHATOPS-PHP-CICD
 
 phases:
-  install:
-    commands:
-      - echo "Install"
-      - python --version
-      - python3 --version
-      - apt-get install python3
-    finally:
-      - echo "Finally Pre Build"
   pre_build:
     commands:
       - echo "Pre Build"
@@ -32,6 +24,6 @@ phases:
       - echo "Finally Build"
   post_build:
     commands:
-      - python ./scripts/codebuild_helper.py --trigger_codebuild --project_name $CHATOPS_JOB_NAME
+      - python3 ./scripts/codebuild_helper.py --trigger_codebuild --project_name $CHATOPS_JOB_NAME
     finally:
       - echo "Finally Post Build"
