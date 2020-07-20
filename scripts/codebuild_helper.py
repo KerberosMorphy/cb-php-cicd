@@ -31,7 +31,7 @@ def set_error(code):
     console_command([f'FAIL=$(echo {code})'])
 
 def error_handler(code):
-    set_error(code)
+    # set_error(code)
     if code == "PRE_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
         exit(1)

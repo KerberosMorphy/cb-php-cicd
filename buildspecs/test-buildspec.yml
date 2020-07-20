@@ -3,6 +3,7 @@ version: 0.2
 env:
   variables:
     CHATOPS_JOB_NAME: CHATOPS-PHP-CICD
+    FAIL: NO_ERROR
 
 phases:
   pre_build:
