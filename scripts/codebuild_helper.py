@@ -65,8 +65,7 @@ def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""
     print("")
     if build_arg:
         print(f"Build image with args {build_arg} from pulled image cache and create {tags}...")
-        # res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", "--build-arg", build_arg, *tags, "--file", f"docker/{dockerfile}", "docker/"])
-        res, err = console_command(["docker", "build", "--cache-from", f"{image_name}:latest", "--build-arg", build_arg, *tags, "--file", f"docker/{dockerfile}", "docker/"])
+        res, err = console_command(["docker", "build", "--quiet", "--cache-from", f"{image_name}:latest", "--build-arg", build_arg, *tags, "--file", f"docker/{dockerfile}", "docker/"])
         print(res)
         if err:
             raise AssertionError(f"{err}")

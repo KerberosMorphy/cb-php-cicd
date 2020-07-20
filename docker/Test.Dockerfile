@@ -7,7 +7,7 @@ RUN set -xe
 # Install git (the php image doesn't have it) which is required by composer
 RUN apt-get update -yqq
 RUN apt-get install git -yqq
-RUN apt-get install python3.8 -yqq
+RUN apt-get install python3 -yqq
 
 # Install phpunit, the tool that we will use for testing
 RUN curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
