@@ -99,9 +99,7 @@ def trigger_codebuild(project_name, image_override=""):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    print(f"\nBUILD CODE: {environ.get('CODEBUILD_BUILD_SUCCEEDING')}\n")
-    if not environ.get('CODEBUILD_BUILD_SUCCEEDING', 1):
-      exit(1)
+    is_error = environ.get('CODEBUILD_BUILD_SUCCEEDING', 1) == 0
     if args.registry_login:
         try:
             registry_login(username=args.username, password=args.password, registry=args.registry)
@@ -114,7 +112,7 @@ if __name__ == '__main__':
         except AssertionError as err:
             print(err)
             environ['FAIL'] = 'BUILD'
-    elif args.trigger_codebuild:
+    elif args.trigger_codebuild and not is_error:
         try:
             trigger_codebuild(project_name=args.project_name, image_override=args.image_override)
         except AssertionError as err:
