@@ -47,6 +47,14 @@ def registry_login(username, password, registry="docker.io"):
     print(res)
     print(err)
 
+def docker_exist(image):
+    print("")
+    print("Login to docker")
+    res, _ = console_command(["docker", "manifest", "inspect", image])
+    if res:
+        return True
+    return False
+
 def build_docker(image_name, tags_list=[], dockerfile="Dockerfile", build_arg=""):
     print("")
     tags_set = {"latest"}
@@ -90,10 +98,10 @@ def trigger_codebuild(project_name, image_override=""):
     print("")
     err = False
     if image_override:
-        res, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name, "--image-override", image_override])
+        _, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name, "--image-override", image_override])
     else:
-        res, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name])
-    # print(res)
+        _, err = console_command(["aws", "codebuild", "start-build", "--project-name", project_name])
+    # print(_)
     if err:
         raise AssertionError(f"{err}")
 
@@ -108,7 +116,8 @@ if __name__ == '__main__':
             environ['FAIL'] = 'PRE_BUILD'
     elif args.build_docker:
         try:
-            build_docker(image_name=args.image_name, tags_list=args.tags_list, dockerfile=args.dockerfile, build_arg=args.build_arg)
+            if not docker_exist(image=args.image_name) or True:
+                build_docker(image_name=args.image_name, tags_list=args.tags_list, dockerfile=args.dockerfile, build_arg=args.build_arg)
         except AssertionError as err:
             print(err)
             environ['FAIL'] = 'BUILD'
