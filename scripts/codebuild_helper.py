@@ -113,6 +113,8 @@ def trigger_codebuild(project_name, image_override=""):
 
 if __name__ == '__main__':
     args = parser.parse_args()
+    print(environ)
+    print(environ['CODEBUILD_BUILD_SUCCEEDING'])
     error_handler(environ.get("FAIL", "NO_ERROR"))
     if args.registry_login:
         try:
