@@ -8,9 +8,6 @@ phases:
   pre_build:
     commands:
       - echo "Pre Build"
-      - echo $(python --version) || true
-      - echo $(python3 --version) || true
-      - echo $(python3.8 --version) || true
     finally:
       - echo "Finally Pre Build"
   build:
@@ -27,6 +24,6 @@ phases:
       - echo "Finally Build"
   post_build:
     commands:
-      - python ./scripts/codebuild_helper.py --trigger_codebuild --project_name $CHATOPS_JOB_NAME
+      - python3 ./scripts/codebuild_helper.py --trigger_codebuild --project_name $CHATOPS_JOB_NAME
     finally:
       - echo "Finally Post Build"
