@@ -30,13 +30,13 @@ def console_command(options: list, stdin=None):
 def error_handler(code):
     if code == "PRE_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
-        exit(1)
+        exit(42)
     elif code == "BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
-        exit(1)
+        exit(42)
     elif code == "POST_BUILD":
         print(f"FAIL {code}, DO SOMETHING WITH THAT")
-        exit(1)
+        exit(42)
     else:
         print('NO FAIL')
 
@@ -100,7 +100,7 @@ def trigger_codebuild(project_name, image_override=""):
 if __name__ == '__main__':
     args = parser.parse_args()
     is_error = environ.get('CODEBUILD_BUILD_SUCCEEDING', 1) == 0
-    print(is_error)
+    print(f"\nIS BUILD FAIL: {is_error}\n")
     if args.registry_login:
         try:
             registry_login(username=args.username, password=args.password, registry=args.registry)
