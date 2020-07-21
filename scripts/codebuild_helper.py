@@ -22,7 +22,7 @@ args = parser.parse_args()
 
 def console_command(options: list, stdin=None):
     proc = Popen(options, stdin=PIPE, stdout=PIPE, stderr=PIPE, encoding='utf-8')
-    if input:
+    if stdin:
         return proc.communicate(input=stdin)
     else:
         return proc.communicate()
